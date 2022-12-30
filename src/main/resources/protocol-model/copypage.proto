@@ -1,0 +1,36 @@
+option java_package = "py.datanode.service.proto";
+
+message PbMembership {
+    required int64 primary = 1;
+    required int32 epoch = 2;
+    required int32 generation = 3;
+    repeated int64 secondaries = 4;
+}
+
+message PbCopyPageRequest {
+    required int64 requestId = 1;
+    required int64 sessionId = 2;
+    required int64 volumeId = 3;
+    required int32 segIndex = 4;
+    required int32 copyPageUnitIndex = 5;
+    required PbMembership membership = 6;
+    repeated PbPage pages = 7;
+    required bytes copyPageUnitBitmap = 8;
+    optional int64 taskId;
+}
+
+message PbPage {
+    required int32 pageIndex = 1;
+    required int32 snapshotId = 2;
+    required int64 checksum = 3;
+    required bytes data = 4;
+    repeated int32 snapshotIds = 5;
+}
+
+message PbCopyPageResponse {
+    required int64 requestId = 1;
+    required int64 sessionId = 2;
+    required PbMembership membership = 3;
+    required bytes copyPageUnitBitmap = 4;
+    optional bytes nextBitmap = 5;
+}

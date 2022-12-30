@@ -1,0 +1,61 @@
+<project name="dbs-dnmodel" default="all" basedir=".">
+    <property name="thrift.model.dir" value="${basedir}/src/main/resources/thrift-model" />
+    <property name="thrift.output.dir.java" value="${basedir}/thrift-generated-src-java" />
+    <property name="thrift.outputexpy.dir" value="${basedir}/thrift-generated-src-java/py/thrift" />
+    <property name="shared.thrift.file.location" value="${basedir}/target/lib/thrift-model" />
+    <property name="thrift.output.dir.cpp" value="${basedir}/thrift-generated-src-cpp" />
+    <property name="thrift" value="thrift" />
+    <property name="src.main.py.thrift.dir" value="${basedir}/src/main/java/py/thrift" />
+    <!--property name="build.dir" location="target" />
+    <property name="classes.dir" value="${build.dir}/classes"/-->
+
+    <target name="clean-thrift-message" description="Removes thrift generated files.">
+        <delete dir="${thrift.output.dir.java}"/>
+        <delete dir="${thrift.output.dir.cpp}"/>
+        <delete dir="${src.main.py.thrift.dir}" />
+    </target>
+
+    <!-- target: init -->
+    <target name="init" description="Sets up the initial structure." depends="clean-thrift-message">
+        <mkdir dir="${thrift.output.dir.java}" />
+        <mkdir dir="${thrift.outputexpy.dir}" />
+        <mkdir dir="${thrift.output.dir.cpp}" />
+        <mkdir dir="${src.main.py.thrift.dir}" />
+    </target>
+        
+    <target name="compile-thrift-message-java" description="Compile thrift message for java" depends="init">
+      <apply executable="${thrift}" parallel="false">
+        <arg value="-I"/>
+        <arg value="${shared.thrift.file.location}"/>
+        <arg value="--gen"/>
+        <arg value="java"/>
+        <arg value="--out"/>
+        <arg value="${thrift.output.dir.java}"/>
+        <fileset dir="${thrift.model.dir}" includes="dn.thrift"/>
+      </apply>
+    </target>
+
+    <target name="compile-thrift-message-cpp" description="Compile thrift message for cpp" depends="init">
+      <apply executable="${thrift}" parallel="false">
+        <arg value="-I"/>
+        <arg value="${shared.thrift.file.location}"/>
+        <arg value="--gen"/>
+        <arg value="cpp"/>
+        <arg value="--out"/>
+        <arg value="${thrift.output.dir.cpp}"/>
+        <srcfile/>
+        <fileset dir="${thrift.model.dir}" includes="*.thrift"/>
+      </apply>
+    </target>
+    
+    <target name="copy-thrift-java" description="copy the java file." depends="compile-thrift-message-java">
+        <copy todir="${src.main.py.thrift.dir}">
+            <fileset dir="${thrift.outputexpy.dir}">
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean" depends="clean-thrift-message" />
+    <target name="all" depends="copy-thrift-java, compile-thrift-message-cpp" />
+</project>
+

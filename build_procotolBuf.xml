@@ -1,0 +1,28 @@
+<project name="pengyun-dnmodel" default="all" basedir=".">
+	<property name="procotol.copy.page.output.dir.java" value="${basedir}/src/main/java" />
+	<property name="protoc" value="protoc" />
+	<property name="procotol.model.src.dir.java" value="${basedir}/src/main/resources/protocol-model" />
+
+	<target name="clean-procotol-message" description="Removes proc generated files.">
+		<delete dir="${procotol.copy.page.output.dir.java}/py/proto" />
+	</target>
+
+	<!-- target: init -->
+	<target name="init" description="Sets up the initial structure." depends="clean-procotol-message">
+		<mkdir dir="${procotol.copy.page.output.dir.java}/py/proto" />
+	</target>
+
+	<target name="compile-procotol-copy-page-message-java" description="Compile procotol copy-page message for java" depends="init">
+		<apply executable="${protoc}" parallel="false" failonerror="true">
+			<arg value="--java_out=${procotol.copy.page.output.dir.java}" />
+			<arg value="-I${basedir}" />
+			<arg line="${procotol.model.src.dir.java}" />
+			<fileset dir="${procotol.model.src.dir.java}" includes="*.proto" />
+		</apply>
+	</target>
+
+
+	<target name="clean" depends="clean-procotol-message" />
+	<target name="all" depends="compile-procotol-copy-page-message-java" />
+</project>
+
