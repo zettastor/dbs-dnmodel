@@ -1,0 +1,1 @@
+Thrift model for defining the structure and data types of [DataNode](https://github.com/zettastor/pengyun-datanode).
